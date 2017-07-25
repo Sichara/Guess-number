@@ -1,24 +1,42 @@
-initApp();
+let lastNumInInterval = 5,
+	winPrise = 0;
 
-function initApp () {
+let numPrise = {
+	1Try: 10,
+	2Try: 5,
+	3Try: 2
+}
+
+initApp(false);
+
+function initApp (isContinue) {
 	let startGame = confirm('Do you want to start game?');
 
 	if (startGame) {
-		let i = 1,
-			randomNum = getRandomArbitrary(0,5);
-			numResult = getNumResult(),
-			numberTry = 1;
-
-		while (numResult !== randomNum && numResult !== null && i < 3) {
-			numResult = parseInt(prompt('Write your number'));
-			i++;			
-		}
-		alertMsgs(numResult, randomNum, i);	
-		
+		setAttempts(isContinue);
 
 	} else {
 		console.log("You didn't win million, but you could");
 	}
+}
+
+function setAttempts (isContinue) {
+	let i = 1,
+		numResult = getNumResult();
+	
+
+	if ( isContinue ) {
+		lastNumInInterval = lastNumInInterval * 2;
+	}
+
+	let randomNum = getRandomArbitrary(0, lastNumInInterval);
+
+	while (numResult !== randomNum && numResult !== null && i < 3) {
+		numResult = parseInt(prompt('Write your number'));
+		i++;			
+	}
+
+	alertPrise(numResult, randomNum, i, isContinue);	
 }
 
 function getNumResult () {
@@ -33,23 +51,35 @@ function getNumResult () {
 	}
 }
 
-function alertMsgs(numResult, randomNum, i) {
+function alertPrise(numResult, randomNum, i, isContinue) {
+	let prevPrise;
 	if ( numResult === randomNum ) {
-		let winPrise;
-		if ( i === 1 ) {
-			winPrise = 10;
+		if ( i === 1 ) {			
+			winPrise = winPrise + 10;
+			if (isContinue) {
+				prevPrise = winPrise;
+				winPrise = winPrise * 3 + prevPrise;
+			}			
 		} else if ( i === 2 ) {
-			winPrise = 5;
+			winPrise = winPrise + 5;
+			if (isContinue) {
+				prevPrise = winPrise;
+				winPrise = winPrise * 3 + prevPrise;
+			}
 		} else {
-			winPrise = 2;
+			winPrise = winPrise + 2;
+			if (isContinue) {
+				prevPrise = winPrise;
+				winPrise = winPrise * 3 + prevPrise;
+			}
 		}
 
 		alert(`You won ${winPrise} $`)
 
-		alertContinueGame(winPrise);
+		alertContinueGame();
 				
 	} else {
-		alert("You won 0 $");
+		alert(`You won ${winPrise} $`);
 		alertPlayAgain();			
 	}
 }
@@ -57,15 +87,17 @@ function alertMsgs(numResult, randomNum, i) {
 function alertPlayAgain () {
 	let playAgain = confirm('Do you want to play again?');
 		if (playAgain) {
-			initApp();
+			initApp(false);
 		}
 }
 
-function alertContinueGame (winPrise) {
+function alertContinueGame () {
 	let continueGame = confirm('Do you want to continue the game?');
 
-	if (!continueGame) {
-		alert(`You won ${winPrise} $`)
+	if (continueGame) {
+		initApp(true);
+	} else {
+		alert(`You won ${winPrise} $`);
 	}
 }
 
