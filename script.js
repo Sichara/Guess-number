@@ -1,10 +1,13 @@
 let lastNumInInterval = 5,
-	winPrise = 0;
+	winPrise = 0,
+	firstTry = 10,
+	secondTry = 5,
+	thirdTry = 2;
 
 let numPrise = {
-	1Try: 10,
-	2Try: 5,
-	3Try: 2
+	firstTry,
+	secondTry,
+	thirdTry
 }
 
 initApp(false);
@@ -52,26 +55,19 @@ function getNumResult () {
 }
 
 function alertPrise(numResult, randomNum, i, isContinue) {
-	let prevPrise;
 	if ( numResult === randomNum ) {
-		if ( i === 1 ) {			
-			winPrise = winPrise + 10;
-			if (isContinue) {
-				prevPrise = winPrise;
-				winPrise = winPrise * 3 + prevPrise;
-			}			
+		if (isContinue) {
+			for (let key in numPrise) {
+				numPrise[key] * 3;				
+			}
+		}
+
+		if ( i === 1 ) {
+			winPrise = winPrise + numPrise.firstTry;			
 		} else if ( i === 2 ) {
-			winPrise = winPrise + 5;
-			if (isContinue) {
-				prevPrise = winPrise;
-				winPrise = winPrise * 3 + prevPrise;
-			}
+			winPrise = winPrise + numPrise.secondTry;	
 		} else {
-			winPrise = winPrise + 2;
-			if (isContinue) {
-				prevPrise = winPrise;
-				winPrise = winPrise * 3 + prevPrise;
-			}
+			winPrise = winPrise + numPrise.thirdTry;	
 		}
 
 		alert(`You won ${winPrise} $`)
