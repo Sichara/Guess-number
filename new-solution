@@ -1,0 +1,125 @@
+(() => {
+	const MESSAGES = {
+		STAR_GAME: 'Do you want to start game?',
+		END_GAME: `You didn't win million, but you could`,
+		ENTER_NUMBER: 'Write your number',
+        LOOSE: 'You loose',
+        PLAY_AGAIN: 'Do you want to play again?',
+        CONTINUE: 'Do you want to continue the game?',
+        WIN: `You won `
+	};
+
+	const GAME_CONFIG = {
+	    maxNumber: 5,
+        minNumber: 0,
+        prizeMultiply: 3,
+        maxPlayerChance: 3,
+        maxNumberMultiply: 2,
+        playerPrize: 0,
+        gameNumber: 0
+    };
+
+	const WIN_PRIZE = {
+	    1: 10,
+        2: 5,
+        3: 2
+    };
+
+    let lastNumInInterval,
+        minNumberInInterval,
+        gameNumber,
+        currentWinPrize,
+        winPrise;
+
+    initApp();
+
+    function resetGame() {
+        winPrise = GAME_CONFIG.playerPrize;
+        lastNumInInterval = GAME_CONFIG.maxNumber;
+        minNumberInInterval = GAME_CONFIG.minNumber;
+        gameNumber = GAME_CONFIG.gameNumber;
+        currentWinPrize = Object.assign({}, WIN_PRIZE);
+    }
+
+    function initApp() {
+        const confirmStartGame = confirm(MESSAGES.STAR_GAME);
+
+        if (confirmStartGame) {
+            startGame();
+
+        } else {
+            console.log(MESSAGES.END_GAME);
+        }
+    }
+
+    function startGame() {
+        resetGame();
+        setAttempts();
+    }
+
+    function setAttempts() {
+        const gameChoice = getRandomArbitrary(0, lastNumInInterval);
+
+        console.log(gameChoice);
+
+        let playerAttempt,
+            playerChoice;
+
+        for (playerAttempt = 0; playerChoice !== gameChoice && playerAttempt < GAME_CONFIG.maxPlayerChance; playerAttempt++) {
+            playerChoice = getNumResult();
+        }
+
+        alertPrise(playerChoice, gameChoice, playerAttempt);
+    }
+
+    function getNumResult() {
+        const numResult = prompt(`${MESSAGES.ENTER_NUMBER} from 0 to ${lastNumInInterval}`);
+
+        if (numResult !== null) {
+            return parseInt(numResult, 10);
+        } else {
+            return null;
+        }
+    }
+
+    function alertPrise(playerChoice, gameChoice, playerAttempt) {
+        if (playerChoice === gameChoice) {
+            winPrise += currentWinPrize[playerAttempt];
+
+            for (let key in currentWinPrize) {
+                currentWinPrize[key] *= 3;
+            }
+
+            lastNumInInterval *= GAME_CONFIG.maxNumberMultiply;
+
+            alertContinueGame();
+
+        } else {
+            alert(MESSAGES.LOOSE);
+            alertPlayAgain();
+        }
+    }
+
+    function alertPlayAgain() {
+        const playAgain = confirm(MESSAGES.PLAY_AGAIN);
+
+        if (playAgain) {
+            startGame();
+        }
+    }
+
+    function alertContinueGame() {
+        const continueGame = confirm(MESSAGES.CONTINUE);
+
+        if (continueGame) {
+            setAttempts();
+        } else {
+            alert(MESSAGES.WIN + `${winPrise} $`);
+        }
+    }
+
+    function getRandomArbitrary(min, max) {
+        return Math.round(Math.random() * (max - min) + min);
+    }
+
+})();
